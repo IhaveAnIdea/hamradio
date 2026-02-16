@@ -1582,10 +1582,16 @@ async function refreshStats(){
     const dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
     const isExam=s.type==='exam';
     const scoreColor=s.pct>=74?'var(--green)':s.pct>=50?'var(--orange)':'var(--red)';
-    const hasWrong=s.wrongCards&&s.wrongCards.length>0;
-    const reviewBtn=hasWrong?`<button class="hi-review-btn" onclick="toggleSessionWrong(${i})" id="hi-btn-${i}">${s.wrongCards.length} missed</button>`:'';
+    const hasDetails=s.wrongCards&&s.wrongCards.length>0;
+    const hasWrong=hasDetails||(s.wrong>0);
+    let reviewBtn='';
+    if(hasDetails){
+      reviewBtn=`<button class="hi-review-btn" onclick="toggleSessionWrong(${i})" id="hi-btn-${i}">${s.wrongCards.length} missed</button>`;
+    }else if(s.wrong>0){
+      reviewBtn=`<span style="font-family:'Space Mono',monospace;font-size:0.6rem;color:var(--text-dim);margin-left:10px;">${s.wrong} missed</span>`;
+    }
     let wrongPanel='';
-    if(hasWrong){
+    if(hasDetails){
       wrongPanel=`<div class="hi-wrong-panel" id="hi-panel-${i}">${s.wrongCards.map(w=>{
         const wFig=FIGURE_MAP[w.id]||null;
         const wFigHtml=wFig?'<div class="q-figure" style="margin:8px 0">'+getFigureSVG(wFig)+'</div>':'';
