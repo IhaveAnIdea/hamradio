@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/Users/actwr/Downloads/ham-radio-flashcards_2.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HAM Radio Technician — Flashcard Trainer</title>
+<link href="./HAM Radio Technician — Flashcard Trainer_files/css2" rel="stylesheet">
+<style>
+:root {
+  --amber: #F5A623;
+  --amber-dim: #C4841D;
+  --bg-dark: #1A1714;
+  --bg-card: #242019;
+  --bg-surface: #2E2A23;
+  --bg-surface-hover: #3A352C;
+  --text-primary: #F0E6D6;
+  --text-secondary: #A89B8C;
+  --text-dim: #706558;
+  --green: #5CB85C;
+  --green-bg: rgba(92,184,92,0.12);
+  --red: #E74C3C;
+  --red-bg: rgba(231,76,60,0.12);
+  --blue: #5DADE2;
+  --orange: #F39C12;
+  --orange-bg: rgba(243,156,18,0.10);
+  --radius: 12px;
+  --radius-lg: 20px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;}
+body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:9998;}
+
+/* HEADER */
+.app-header{text-align:center;padding:28px 20px 12px;position:relative;}
+.app-header h1{font-family:'Space Mono',monospace;font-size:clamp(1.4rem,4vw,2rem);letter-spacing:4px;text-transform:uppercase;color:var(--amber);text-shadow:0 0 30px rgba(245,166,35,0.3);margin-bottom:4px;}
+.app-header .subtitle{font-family:'Instrument Serif',serif;font-size:clamp(0.95rem,2.5vw,1.15rem);color:var(--text-secondary);font-style:italic;letter-spacing:1px;}
+.freq-display{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--text-dim);letter-spacing:3px;margin-top:6px;}
+
+/* BMC LINK */
+.bmc-link{
+  position:absolute;
+  top:20px;right:20px;
+  display:flex;align-items:center;gap:6px;
+  padding:8px 14px;
+  background:rgba(255,221,0,0.1);
+  border:1px solid rgba(255,221,0,0.25);
+  border-radius:var(--radius);
+  color:#FFDD00;
+  font-family:'Space Mono',monospace;
+  font-size:0.65rem;
+  letter-spacing:0.5px;
+  text-decoration:none;
+  transition:var(--transition);
+  z-index:10;
+}
+.bmc-link:hover{background:rgba(255,221,0,0.18);border-color:rgba(255,221,0,0.4);transform:translateY(-1px);}
+.bmc-link svg{width:16px;height:16px;flex-shrink:0;}
+
+@media(max-width:520px){
+  .bmc-link span{display:none;}
+  .bmc-link{padding:8px 10px;}
+}
+
+/* NAV */
+.nav-tabs{display:flex;justify-content:center;gap:4px;padding:8px 20px;max-width:500px;margin:0 auto;}
+.nav-tab{flex:1;padding:10px 12px;background:var(--bg-surface);border:1px solid rgba(245,166,35,0.1);border-radius:var(--radius);color:var(--text-secondary);font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:var(--transition);text-align:center;}
+.nav-tab:hover{background:var(--bg-surface-hover);color:var(--text-primary);}
+.nav-tab.active{background:rgba(245,166,35,0.12);color:var(--amber);border-color:rgba(245,166,35,0.3);}
+
+.screen{display:none;max-width:680px;margin:0 auto;padding:16px 20px 100px;}
+.screen.active{display:block;}
+
+/* STATS BAR */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+.stat-box{background:var(--bg-surface);border:1px solid rgba(245,166,35,0.08);border-radius:var(--radius);padding:12px 8px;text-align:center;}
+.stat-box .stat-value{font-family:'Space Mono',monospace;font-size:1.4rem;color:var(--amber);line-height:1;}
+.stat-box .stat-label{font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+
+/* TOPICS */
+.topic-grid{display:grid;gap:8px;margin-bottom:20px;}
+.topic-btn{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg-surface);border:1px solid rgba(245,166,35,0.08);border-radius:var(--radius);color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:0.9rem;cursor:pointer;transition:var(--transition);}
+.topic-btn:hover{background:var(--bg-surface-hover);border-color:rgba(245,166,35,0.2);}
+.topic-btn.active{background:rgba(245,166,35,0.1);border-color:rgba(245,166,35,0.3);}
+.topic-count{font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--text-dim);}
+.topic-mastery{width:40px;height:4px;background:rgba(245,166,35,0.1);border-radius:2px;overflow:hidden;margin-left:8px;}
+.topic-mastery-fill{height:100%;background:var(--green);border-radius:2px;transition:width 0.5s ease;}
+
+/* BUTTONS */
+.start-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--amber),var(--amber-dim));border:none;border-radius:var(--radius);color:var(--bg-dark);font-family:'Space Mono',monospace;font-size:0.9rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:var(--transition);box-shadow:0 4px 20px rgba(245,166,35,0.25);}
+.start-btn:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(245,166,35,0.35);}
+.start-btn.secondary{background:var(--bg-surface);color:var(--amber);box-shadow:none;border:1px solid rgba(245,166,35,0.25);}
+.start-btn.secondary:hover{background:var(--bg-surface-hover);box-shadow:none;}
+.start-btn.danger{background:var(--red-bg);color:var(--red);box-shadow:none;border:1px solid rgba(231,76,60,0.2);font-size:0.75rem;}
+.btn-row{display:flex;flex-direction:column;gap:10px;}
+
+/* PROGRESS */
+.card-progress{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-progress .progress-text{font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--text-dim);white-space:nowrap;}
+.progress-bar-bg{flex:1;height:3px;background:rgba(245,166,35,0.1);border-radius:2px;margin:0 12px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--amber);border-radius:2px;transition:width 0.4s ease;}
+
+/* LIVE SCORE */
+.live-score{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:16px;font-family:'Space Mono',monospace;font-size:0.8rem;}
+.live-score .ls-correct{color:var(--green);}
+.live-score .ls-wrong{color:var(--red);}
+.live-score .ls-sep{color:var(--text-dim);}
+
+/* QUESTION CARD */
+.q-card{background:linear-gradient(145deg,var(--bg-card),#1E1B16);border:1px solid rgba(245,166,35,0.15);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow),inset 0 1px 0 rgba(245,166,35,0.05);margin-bottom:16px;}
+.q-card .q-tag{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--amber);opacity:0.6;margin-bottom:4px;}
+.q-card .q-id{font-family:'Space Mono',monospace;font-size:0.55rem;color:var(--text-dim);opacity:0.4;float:right;}
+.q-card .q-text{font-size:clamp(1rem,3vw,1.15rem);line-height:1.65;color:var(--text-primary);margin-top:8px;}
+
+/* OPTIONS */
+.options-list{display:grid;gap:8px;margin-bottom:16px;}
+.option-btn{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;background:var(--bg-surface);border:1.5px solid rgba(245,166,35,0.1);border-radius:var(--radius);color:var(--text-primary);font-family:'DM Sans',sans-serif;font-size:0.9rem;line-height:1.45;cursor:pointer;transition:var(--transition);text-align:left;}
+.option-btn:hover:not(.disabled){background:var(--bg-surface-hover);border-color:rgba(245,166,35,0.3);}
+.option-btn .opt-letter{font-family:'Space Mono',monospace;font-weight:700;font-size:0.8rem;min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(245,166,35,0.08);color:var(--amber);flex-shrink:0;transition:var(--transition);}
+.option-btn .opt-text{flex:1;}
+
+.option-btn.selected-correct{background:var(--green-bg);border-color:var(--green);color:var(--green);}
+.option-btn.selected-correct .opt-letter{background:var(--green);color:var(--bg-dark);}
+.option-btn.selected-wrong{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+.option-btn.selected-wrong .opt-letter{background:var(--red);color:white;}
+.option-btn.reveal-correct{border-color:rgba(92,184,92,0.4);color:var(--green);}
+.option-btn.reveal-correct .opt-letter{background:rgba(92,184,92,0.25);color:var(--green);}
+.option-btn.disabled{pointer-events:none;opacity:0.45;}
+
+/* ANSWER EXPLAIN */
+.answer-explain{background:rgba(92,184,92,0.06);border:1px solid rgba(92,184,92,0.15);border-radius:var(--radius);padding:14px 16px;margin-bottom:16px;display:none;}
+.answer-explain.visible{display:block;animation:fadeIn 0.3s ease;}
+.answer-explain .ae-label{font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:2px;text-transform:uppercase;color:var(--green);margin-bottom:6px;}
+.answer-explain .ae-text{font-size:0.9rem;line-height:1.5;color:var(--text-secondary);}
+.answer-explain .ae-source{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:6px 12px;background:rgba(93,173,226,0.08);border:1px solid rgba(93,173,226,0.2);border-radius:8px;color:var(--blue);font-family:'Space Mono',monospace;font-size:0.65rem;letter-spacing:0.5px;text-decoration:none;transition:var(--transition);}
+.answer-explain .ae-source:hover{background:rgba(93,173,226,0.15);border-color:rgba(93,173,226,0.35);}
+.answer-explain .ae-source svg{width:12px;height:12px;flex-shrink:0;}
+
+/* NEXT */
+.next-btn{width:100%;padding:15px;background:rgba(245,166,35,0.12);border:1px solid rgba(245,166,35,0.3);border-radius:var(--radius);color:var(--amber);font-family:'Space Mono',monospace;font-size:0.85rem;letter-spacing:1px;cursor:pointer;transition:var(--transition);display:none;}
+.next-btn:hover{background:rgba(245,166,35,0.22);}
+.next-btn.visible{display:block;animation:fadeIn 0.2s ease;}
+
+.keyboard-hint{text-align:center;font-size:0.68rem;color:var(--text-dim);margin-top:10px;}
+kbd{display:inline-block;padding:2px 6px;background:var(--bg-surface);border:1px solid rgba(255,255,255,0.1);border-radius:4px;font-family:'Space Mono',monospace;font-size:0.6rem;}
+
+/* RESULTS */
+.results-card{background:var(--bg-surface);border:1px solid rgba(245,166,35,0.1);border-radius:var(--radius-lg);padding:32px 24px;text-align:center;margin-bottom:20px;}
+.results-score{font-family:'Space Mono',monospace;font-size:3.5rem;color:var(--amber);text-shadow:0 0 40px rgba(245,166,35,0.3);line-height:1;}
+.results-label{font-size:0.85rem;color:var(--text-secondary);margin-top:8px;margin-bottom:20px;}
+.results-grade{font-family:'Instrument Serif',serif;font-size:1.5rem;margin-bottom:4px;}
+.results-grade.pass{color:var(--green);}
+.results-grade.fail{color:var(--red);}
+.results-detail{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;text-align:left;}
+.results-detail .detail-item{padding:12px;background:rgba(0,0,0,0.2);border-radius:8px;}
+.results-detail .detail-label{font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--text-dim);}
+.results-detail .detail-value{font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--text-primary);margin-top:2px;}
+
+.wrong-item{padding:14px 16px;background:var(--bg-surface);border:1px solid rgba(231,76,60,0.12);border-radius:var(--radius);margin-bottom:8px;}
+.wrong-item .wi-q{font-size:0.88rem;color:var(--text-primary);margin-bottom:8px;line-height:1.5;}
+.wrong-item .wi-your{font-size:0.8rem;color:var(--red);margin-bottom:4px;}
+.wrong-item .wi-correct{font-size:0.8rem;color:var(--green);}
+.wrong-item .wi-tag{font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:1px;color:var(--text-dim);margin-bottom:6px;}
+
+/* STATS SCREEN */
+.stats-section{margin-bottom:24px;}
+.stats-section h3{font-family:'Space Mono',monospace;font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(245,166,35,0.1);}
+.mastery-ring-container{display:flex;justify-content:center;margin-bottom:24px;}
+.mastery-ring{position:relative;width:160px;height:160px;}
+.mastery-ring svg{transform:rotate(-90deg);}
+.mastery-ring .ring-bg{fill:none;stroke:rgba(245,166,35,0.1);stroke-width:8;}
+.mastery-ring .ring-fill{fill:none;stroke:var(--amber);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset 1s ease;}
+.mastery-ring .ring-text{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;}
+.mastery-ring .ring-pct{font-family:'Space Mono',monospace;font-size:2rem;color:var(--amber);}
+.mastery-ring .ring-label{font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;}
+
+.topic-stat-row{display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.topic-stat-row .tsr-name{flex:1;font-size:0.85rem;color:var(--text-secondary);}
+.topic-stat-row .tsr-bar{width:80px;height:4px;background:rgba(245,166,35,0.1);border-radius:2px;margin:0 12px;overflow:hidden;}
+.topic-stat-row .tsr-bar-fill{height:100%;border-radius:2px;transition:width 0.5s ease;}
+.topic-stat-row .tsr-pct{font-family:'Space Mono',monospace;font-size:0.75rem;color:var(--text-dim);width:36px;text-align:right;}
+.topic-stat-row .tsr-frac{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--text-dim);width:48px;text-align:right;margin-left:4px;}
+
+/* accuracy bars color */
+.acc-bar-fill{background:var(--green);}
+.acc-bar-fill.medium{background:var(--orange);}
+.acc-bar-fill.low{background:var(--red);}
+
+/* session history list */
+.history-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,0,0,0.15);border-radius:8px;margin-bottom:6px;font-size:0.82rem;}
+.history-item .hi-type{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-right:10px;}
+.history-item .hi-type.study{background:rgba(245,166,35,0.1);color:var(--amber);}
+.history-item .hi-type.exam{background:rgba(93,173,226,0.1);color:var(--blue);}
+.history-item .hi-date{color:var(--text-dim);font-size:0.75rem;flex:1;}
+.history-item .hi-score{font-family:'Space Mono',monospace;font-weight:700;}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+.animate-in{animation:fadeIn 0.4s ease forwards;}
+.animate-slide{animation:slideIn 0.3s ease forwards;}
+@keyframes flashG{0%{color:var(--green);text-shadow:0 0 12px rgba(92,184,92,0.5);}100%{text-shadow:none;}}
+@keyframes flashR{0%{color:var(--red);text-shadow:0 0 12px rgba(231,76,60,0.5);}100%{text-shadow:none;}}
+.flash-green{animation:flashG 0.5s ease;}
+.flash-red{animation:flashR 0.5s ease;}
+
+@media(max-width:480px){
+  .stats-bar{grid-template-columns:repeat(2,1fr);}
+  .results-detail{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <a class="bmc-link" href="https://buymeacoffee.com/craigwinter" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1"></path><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+    <span>Buy Me a Coffee</span>
+  </a>
+  <h1>⚡ HAM RADIO</h1>
+  <div class="subtitle">Technician Class License Trainer</div>
+  <div class="freq-display">FCC ELEMENT 2 — 2022-2026 QUESTION POOL</div>
+</header>
+
+<nav class="nav-tabs">
+  <button class="nav-tab active" data-screen="study" onclick="showScreen(&#39;study&#39;)">Study</button>
+  <button class="nav-tab" data-screen="exam" onclick="showScreen(&#39;exam&#39;)">Exam</button>
+  <button class="nav-tab" data-screen="stats" onclick="showScreen(&#39;stats&#39;)">Stats</button>
+</nav>
+
+<!-- STUDY -->
+<div id="screen-study" class="screen active">
+  <div class="stats-bar">
+    <div class="stat-box"><div class="stat-value" id="stat-total">100</div><div class="stat-label">Cards</div></div>
+    <div class="stat-box"><div class="stat-value" id="stat-mastered">0</div><div class="stat-label">Mastered</div></div>
+    <div class="stat-box"><div class="stat-value" id="stat-learning">0</div><div class="stat-label">Learning</div></div>
+    <div class="stat-box"><div class="stat-value" id="stat-new">100</div><div class="stat-label">New</div></div>
+  </div>
+  <div id="topic-selector" style="display: none;">
+    <div class="topic-grid" id="topic-grid"><button class="topic-btn active"><span>FCC Rules</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">17q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Operating</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">11q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Propagation</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">10q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Station Setup</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">4q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Electrical</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">15q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn"><span>Components</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">10q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Circuits</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">7q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Signals</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">7q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Antennas</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">9q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Safety</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">10q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button></div>
+    <div class="btn-row">
+      <button class="start-btn" onclick="startStudy(&#39;all&#39;)">▶ STUDY SESSION (20 cards)</button>
+      <button class="start-btn secondary" id="review-wrong-btn" onclick="startStudy(&#39;wrong&#39;)" style="display:none;">↻ REVIEW WRONG ANSWERS (<span id="wrong-count">0</span>)</button>
+    </div>
+  </div>
+  <div id="study-active" style="">
+    <div class="card-progress">
+      <span class="progress-text">2 / 20</span>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:10%"></div></div>
+      <span class="progress-text">FCC Rules</span>
+    </div>
+    <div class="live-score" id="live-score-study-active">
+    <span class="ls-correct flash-green">✓ 2</span>
+    <span class="ls-sep">·</span>
+    <span class="ls-wrong ">✗ 0</span>
+    <span class="ls-sep">·</span>
+    <span style="color:var(--text-dim)">18 left</span>
+  </div>
+    <div class="q-card animate-slide">
+      <span class="q-id">T1B04</span>
+      <div class="q-tag">FCC Rules</div>
+      <div class="q-text">Which amateur band includes 146.52 MHz?</div>
+    </div>
+    <div class="options-list" id="opts-study-active">
+      
+        <button class="option-btn selected-correct" data-di="0" onclick="handleAnswer(0,&#39;study-active&#39;)">
+          <span class="opt-letter">A</span>
+          <span class="opt-text">2 meter band</span>
+        </button>
+      
+        <button class="option-btn disabled" data-di="1" onclick="handleAnswer(1,&#39;study-active&#39;)">
+          <span class="opt-letter">B</span>
+          <span class="opt-text">1.25 meter band</span>
+        </button>
+      
+        <button class="option-btn disabled" data-di="2" onclick="handleAnswer(2,&#39;study-active&#39;)">
+          <span class="opt-letter">C</span>
+          <span class="opt-text">70 cm band</span>
+        </button>
+      
+        <button class="option-btn disabled" data-di="3" onclick="handleAnswer(3,&#39;study-active&#39;)">
+          <span class="opt-letter">D</span>
+          <span class="opt-text">6 meter band</span>
+        </button>
+      
+    </div>
+    <div class="answer-explain visible" id="ae-study-active">
+      <div class="ae-label">✓ Correct Answer</div>
+      <div class="ae-text">2 meter band</div>
+      <a class="ae-source" href="https://hamstudy.org/tech2022/T1B04" target="_blank" rel="noopener">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg> Study T1B04 on HamStudy.org
+      </a>
+    </div>
+    <button class="next-btn visible" id="nb-study-active" onclick="nextQuestion(&#39;study-active&#39;)">NEXT →</button>
+    <div class="keyboard-hint"><kbd>A</kbd>–<kbd>D</kbd> answer · <kbd>Enter</kbd> next · <kbd>Esc</kbd> end</div>
+  </div>
+</div>
+
+<!-- EXAM -->
+<div id="screen-exam" class="screen">
+  <div id="exam-setup">
+    <div class="results-card">
+      <div style="font-size:2.5rem;margin-bottom:12px;">📡</div>
+      <div class="results-grade" style="color:var(--amber);">Practice Exam</div>
+      <div class="results-label">35 questions · 26 correct to pass (74%)<br>Random draw from the full question pool</div>
+    </div>
+    <button class="start-btn" onclick="startExam()">▶ START PRACTICE EXAM</button>
+  </div>
+  <div id="exam-active" style="display:none;"></div>
+</div>
+
+<!-- STATS -->
+<div id="screen-stats" class="screen">
+  <div class="mastery-ring-container">
+    <div class="mastery-ring">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="ring-bg" cx="80" cy="80" r="68"></circle>
+        <circle class="ring-fill" id="mastery-ring-fill" cx="80" cy="80" r="68" stroke-dasharray="427.3" stroke-dashoffset="427.3"></circle>
+      </svg>
+      <div class="ring-text">
+        <div class="ring-pct" id="mastery-pct">0%</div>
+        <div class="ring-label">Mastery</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <h3>Overall Accuracy</h3>
+    <div class="stats-bar" id="accuracy-stats">
+      <div class="stat-box"><div class="stat-value" id="acc-total-reviews">0</div><div class="stat-label">Total Answers</div></div>
+      <div class="stat-box"><div class="stat-value" id="acc-total-correct">0</div><div class="stat-label">Correct</div></div>
+      <div class="stat-box"><div class="stat-value" id="acc-pct">—</div><div class="stat-label">Accuracy</div></div>
+      <div class="stat-box"><div class="stat-value" id="acc-streak">0</div><div class="stat-label">Best Exam</div></div>
+    </div>
+  </div>
+
+  <div class="stats-section">
+    <h3>Accuracy by Topic</h3>
+    <div id="topic-stats"></div>
+  </div>
+
+  <div class="stats-section">
+    <h3>Recent Sessions</h3>
+    <div id="session-history"></div>
+  </div>
+
+  <button class="start-btn danger" onclick="resetProgress()" style="margin-top:20px;">⚠ RESET ALL PROGRESS</button>
+</div>
+
+<script>
+// =========================================================================
+// QUESTION POOL — FCC Element 2 Technician (2022-2026)
+// =========================================================================
+const QUESTIONS=[
+{id:"T1A01",topic:"FCC Rules",q:"Which of the following is part of the Technician class license exam?",a:"Element 2",choices:["Element 1","Element 2","Element 3","Element 4"],correct:1},
+{id:"T1A02",topic:"FCC Rules",q:"What is the FCC Part 97 definition of a beacon?",a:"An amateur station transmitting communications for observing propagation or related experimental activities",choices:["A government transmitter marking combatants","An amateur station transmitting for observing propagation","A continuously keyed navigation station","A station that automatically retransmits signals"],correct:1},
+{id:"T1A04",topic:"FCC Rules",q:"How many operator/primary station license grants may be held by any one person?",a:"One",choices:["One","Two","One for each band","Unlimited"],correct:0},
+{id:"T1A05",topic:"FCC Rules",q:"What is the FCC Part 97 definition of telecommand?",a:"A one-way transmission to initiate, modify, or terminate functions of a device at a distance",choices:["An instruction to an autopilot","A one-way transmission to control a device at a distance","Remote control of model craft","Digital command signals for repeaters"],correct:1},
+{id:"T1A07",topic:"FCC Rules",q:"What is the FCC Part 97 definition of telemetry?",a:"A one-way transmission of measurements at a distance from the measuring instrument",choices:["Two-way measurement data","A one-way transmission of measurements from a remote instrument","A transmission of telecommand signals","Continuous status reports from repeaters"],correct:1},
+{id:"T1A10",topic:"FCC Rules",q:"What is the FCC Part 97 definition of an amateur station?",a:"A station consisting of the apparatus necessary for carrying on radiocommunications",choices:["A station operated on ham bands","The apparatus for carrying on amateur radiocommunications","A transmitter used by a licensed amateur","Any radio in the ham bands"],correct:1},
+{id:"T1B01",topic:"FCC Rules",q:"Which frequency bands are available to Technician class operators?",a:"All bands above 30 MHz and portions of HF bands",choices:["VHF and UHF only","All bands above 30 MHz and portions of HF","HF bands only","All amateur bands"],correct:1},
+{id:"T1B03",topic:"FCC Rules",q:"Which frequency is in the 6 meter amateur band?",a:"52.525 MHz",choices:["49.00 MHz","52.525 MHz","28.50 MHz","222.15 MHz"],correct:1},
+{id:"T1B04",topic:"FCC Rules",q:"Which amateur band includes 146.52 MHz?",a:"2 meter band",choices:["6 meter band","2 meter band","70 cm band","1.25 meter band"],correct:1},
+{id:"T1C01",topic:"FCC Rules",q:"For which license classes are new licenses currently available from the FCC?",a:"Technician, General, and Amateur Extra",choices:["Novice, Tech, General, Advanced, Extra","Technician, General, and Extra","Technician Plus, General, Extra","Novice, Technician, General, Extra"],correct:1},
+{id:"T1C03",topic:"FCC Rules",q:"What types of international communications are allowed for amateur stations?",a:"Communications incidental to amateur purposes and remarks of a personal character",choices:["Any type including business","Incidental to amateur purposes and personal remarks","Only emergency communications","Only Morse code and digital"],correct:1},
+{id:"T1D01",topic:"FCC Rules",q:"With which countries are FCC-licensed amateur stations prohibited from exchanging communications?",a:"Any country whose administration has notified the ITU that it objects",choices:["All non-NATO countries","Any country that notified the ITU of objections","Countries not part of IARU","No restrictions exist"],correct:1},
+{id:"T1D06",topic:"FCC Rules",q:"What are the restrictions on obscene language in the Amateur Radio Service?",a:"Any obscene or indecent language is prohibited",choices:["Only on repeaters","Any obscene or indecent language is prohibited","Only in contest operations","On frequencies below 30 MHz"],correct:1},
+{id:"T1D09",topic:"FCC Rules",q:"When may amateur stations transmit in codes or ciphers?",a:"Only for control commands to space stations or radio control craft",choices:["Never","Only for control commands to space stations or RC craft","Anytime with proper identification","During emergencies only"],correct:1},
+{id:"T1E01",topic:"FCC Rules",q:"When may an amateur station transmit without identification?",a:"When transmitting signals to control model craft",choices:["Never","When transmitting signals to control model craft","During contests","When using low power"],correct:1},
+{id:"T1F01",topic:"FCC Rules",q:"When must the station be available for FCC inspection?",a:"At any time upon request by an FCC representative",choices:["During business hours only","At any time upon FCC request","Only during scheduled inspections","Within 30 days of written notice"],correct:1},
+{id:"T1F04",topic:"FCC Rules",q:"What language is acceptable for station identification on a phone sub-band?",a:"The English language",choices:["Any language","The English language","Language of the country you are in","Language of the country being contacted"],correct:1},
+{id:"T2A01",topic:"Operating",q:"What is a common repeater frequency offset in the 2 meter band?",a:"Plus or minus 600 kHz",choices:["Plus or minus 500 kHz","Plus or minus 600 kHz","Plus or minus 1 MHz","Plus or minus 5 MHz"],correct:1},
+{id:"T2A02",topic:"Operating",q:"What is the national calling frequency for FM simplex on 2 meters?",a:"146.520 MHz",choices:["146.520 MHz","145.000 MHz","148.000 MHz","147.300 MHz"],correct:0},
+{id:"T2A03",topic:"Operating",q:"What is a common repeater frequency offset in the 70 cm band?",a:"Plus or minus 5 MHz",choices:["Plus or minus 600 kHz","Plus or minus 1 MHz","Plus or minus 5 MHz","Plus or minus 100 kHz"],correct:2},
+{id:"T2A05",topic:"Operating",q:"What should you transmit when responding to a CQ call?",a:"The other station's call sign followed by your call sign",choices:["CQ followed by your call sign","The other station's call then yours","Your call sign three times","Just your call sign"],correct:1},
+{id:"T2A06",topic:"Operating",q:"What must an amateur station do when making transmissions?",a:"Transmit its assigned call sign at regular intervals",choices:["Transmit full legal name","Transmit call sign at regular intervals","Log all contacts in real time","Announce frequency and power"],correct:1},
+{id:"T2B01",topic:"Operating",q:"How is a transceiver's \"reverse\" function used?",a:"To listen on a repeater's input frequency",choices:["To reverse sideband","To listen on a repeater's input frequency","To swap VFO A and B","To transmit on the output frequency"],correct:1},
+{id:"T2B03",topic:"Operating",q:"What is CTCSS?",a:"A sub-audible tone system to open receiver squelch",choices:["A digital mode","A sub-audible tone system to open squelch","A type of antenna","A satellite protocol"],correct:1},
+{id:"T2B05",topic:"Operating",q:"What would cause garbled FM transmission on a repeater?",a:"Transmitting on an improper offset or wrong frequency",choices:["Using too much power","Improper offset or wrong frequency","Being too close to the repeater","Using the wrong microphone"],correct:1},
+{id:"T2B08",topic:"Operating",q:"What does the procedural signal \"CQ\" mean?",a:"Calling any station",choices:["Change frequency","Calling any station","Contact Quebec","Closing transmission"],correct:1},
+{id:"T2C01",topic:"Operating",q:"How often must you identify your station during communication?",a:"At least every 10 minutes and at the end",choices:["Every 5 minutes","Every 10 minutes and at the end","Beginning and end only","Only at the end"],correct:1},
+{id:"T2C07",topic:"Operating",q:"What is the purpose of the squelch control?",a:"To mute the receiver when no signal is present",choices:["To control transmit power","To mute receiver when no signal is present","To adjust frequency offset","To filter interference"],correct:1},
+{id:"T3A01",topic:"Propagation",q:"Why do VHF signals travel somewhat farther than visual line of sight?",a:"The atmosphere bends radio waves beyond the geometric horizon",choices:["VHF signals are stronger","Atmosphere bends waves beyond the horizon","Ground reflections extend range","VHF penetrates obstacles"],correct:1},
+{id:"T3A03",topic:"Propagation",q:"What polarization is used for long-distance CW/SSB on VHF/UHF?",a:"Horizontal",choices:["Vertical","Horizontal","Circular","No specific polarization"],correct:1},
+{id:"T3A04",topic:"Propagation",q:"What happens with mismatched antenna polarization on a VHF/UHF link?",a:"Signals could be significantly weaker (cross-polarization loss)",choices:["No effect","Signals could be significantly weaker","Frequency will shift","Only digital modes will work"],correct:1},
+{id:"T3B01",topic:"Propagation",q:"What is the relationship between E and M fields of an electromagnetic wave?",a:"They are at right angles to each other",choices:["They are parallel","At right angles to each other","They are opposite","They alternate direction"],correct:1},
+{id:"T3B04",topic:"Propagation",q:"How fast does a radio wave travel through free space?",a:"At the speed of light (~300,000,000 m/s)",choices:["Speed of sound","Speed of light","Half the speed of light","Varies by frequency"],correct:1},
+{id:"T3B06",topic:"Propagation",q:"What is the formula for converting frequency to wavelength in meters?",a:"Wavelength = 300 / frequency in MHz",choices:["Wavelength = frequency × 300","Wavelength = 300 / frequency in MHz","Wavelength = frequency / 300","Wavelength = 300 × frequency in GHz"],correct:1},
+{id:"T3B11",topic:"Propagation",q:"What is the approximate velocity of a radio wave in free space?",a:"300,000,000 meters per second",choices:["3,000 m/s","300,000 m/s","300,000,000 m/s","3,000,000,000 m/s"],correct:2},
+{id:"T3C01",topic:"Propagation",q:"Why are simplex UHF signals rarely heard beyond line of sight?",a:"UHF signals are usually not reflected by the ionosphere",choices:["UHF has too much static","UHF not usually reflected by ionosphere","UHF antennas are too weak","UHF requires repeaters"],correct:1},
+{id:"T3C04",topic:"Propagation",q:"Which propagation type causes occasional long-distance VHF signals?",a:"Sporadic E",choices:["Tropospheric scatter","Sporadic E","Ground wave","Meteor scatter"],correct:1},
+{id:"T3C06",topic:"Propagation",q:"What mode allows over-the-horizon VHF/UHF to ~300 miles regularly?",a:"Tropospheric ducting",choices:["Sporadic E","Tropospheric ducting","F2 layer refraction","Meteor scatter"],correct:1},
+{id:"T4A05",topic:"Station Setup",q:"Where should an in-line SWR meter be connected?",a:"Between the transmitter and antenna in the feed line",choices:["Between power supply and radio","Between transmitter and antenna","After the antenna","At the microphone input"],correct:1},
+{id:"T4B01",topic:"Station Setup",q:"What is the effect of excessive microphone gain on FM?",a:"Distortion and over-deviation causing splatter",choices:["Clearer audio","Distortion and over-deviation causing splatter","No audible effect","Increased range"],correct:1},
+{id:"T4B03",topic:"Station Setup",q:"What does the squelch control on a transceiver do?",a:"Mutes the speaker when no signal is being received",choices:["Adjusts transmit power","Mutes speaker when no signal is received","Controls frequency drift","Sets repeater offset"],correct:1},
+{id:"T4B08",topic:"Station Setup",q:"Why have multiple receive bandwidth choices on a multimode transceiver?",a:"Permits noise reduction by matching bandwidth to mode",choices:["Receive multiple stations","Noise reduction by matching bandwidth to mode","Required for digital modes","Increases transmit power"],correct:1},
+{id:"T5A01",topic:"Electrical",q:"Electrical current is measured in which units?",a:"Amperes",choices:["Volts","Amperes","Watts","Ohms"],correct:1},
+{id:"T5A03",topic:"Electrical",q:"What is the name for the flow of electrons in a circuit?",a:"Current",choices:["Voltage","Current","Resistance","Inductance"],correct:1},
+{id:"T5A05",topic:"Electrical",q:"What electrical term describes the force that causes electron flow?",a:"Voltage (electromotive force)",choices:["Current","Voltage","Resistance","Capacitance"],correct:1},
+{id:"T5A06",topic:"Electrical",q:"What is the unit of electromotive force?",a:"The volt",choices:["The ampere","The volt","The watt","The ohm"],correct:1},
+{id:"T5A08",topic:"Electrical",q:"What is the formula for power in a DC circuit?",a:"P = E × I (Power = Voltage × Current)",choices:["P = E / I","P = I / E","P = E × I","P = E² / P"],correct:2},
+{id:"T5A10",topic:"Electrical",q:"What is the unit of impedance?",a:"Ohms",choices:["Volts","Amperes","Ohms","Watts"],correct:2},
+{id:"T5A12",topic:"Electrical",q:"What describes the number of complete AC cycles per second?",a:"Frequency",choices:["Pulse rate","Frequency","Wavelength","Amplitude"],correct:1},
+{id:"T5B01",topic:"Electrical",q:"How many milliamperes is 1.5 amperes?",a:"1,500 milliamperes",choices:["15","150","1,500","15,000"],correct:2},
+{id:"T5C01",topic:"Electrical",q:"What is the ability to store energy in an electric field called?",a:"Capacitance",choices:["Inductance","Capacitance","Resistance","Reactance"],correct:1},
+{id:"T5C03",topic:"Electrical",q:"What is the ability to store energy in a magnetic field called?",a:"Inductance",choices:["Capacitance","Inductance","Resistance","Reluctance"],correct:1},
+{id:"T5C08",topic:"Electrical",q:"What is Ohm's Law formula for resistance?",a:"R = E / I",choices:["R = E × I","R = I / E","R = E / I","R = P / E"],correct:2},
+{id:"T5D01",topic:"Electrical",q:"What formula calculates current in a circuit?",a:"I = E / R",choices:["I = E × R","I = R / E","I = E / R","I = P / R"],correct:2},
+{id:"T5D03",topic:"Electrical",q:"What formula calculates voltage in a circuit?",a:"E = I × R",choices:["E = I / R","E = I × R","E = R / I","E = P × R"],correct:1},
+{id:"T5D10",topic:"Electrical",q:"Voltage across a 2-ohm resistor with 0.5A current?",a:"1 volt",choices:["0.25 volts","1 volt","2.5 volts","4 volts"],correct:1},
+{id:"T5D12",topic:"Electrical",q:"Current through a 100-ohm resistor across 200 volts?",a:"2 amperes",choices:["0.5 amperes","2 amperes","20 amperes","20,000 amperes"],correct:1},
+{id:"T6A01",topic:"Components",q:"What component opposes current flow in a DC circuit?",a:"Resistor",choices:["Inductor","Resistor","Capacitor","Transformer"],correct:1},
+{id:"T6A02",topic:"Components",q:"What component is often used as an adjustable volume control?",a:"Potentiometer",choices:["Fixed resistor","Potentiometer","Capacitor","Switch"],correct:1},
+{id:"T6A04",topic:"Components",q:"What component stores energy in an electric field?",a:"Capacitor",choices:["Resistor","Inductor","Capacitor","Varistor"],correct:2},
+{id:"T6A06",topic:"Components",q:"What component stores energy in a magnetic field?",a:"Inductor",choices:["Resistor","Capacitor","Inductor","Diode"],correct:2},
+{id:"T6B01",topic:"Components",q:"What component uses a signal to control current flow?",a:"Transistor",choices:["Resistor","Transistor","Capacitor","Diode"],correct:1},
+{id:"T6B02",topic:"Components",q:"What component allows current in only one direction?",a:"Diode",choices:["Resistor","Diode","Capacitor","Fuse"],correct:1},
+{id:"T6B06",topic:"Components",q:"How is the cathode of a diode often marked?",a:"With a stripe or band",choices:["With a dot","With a stripe or band","With a longer lead","With red coloring"],correct:1},
+{id:"T6B09",topic:"Components",q:"What is a transistor's primary function?",a:"To amplify or switch electronic signals",choices:["To store energy","To amplify or switch signals","To block DC current","To convert AC to DC"],correct:1},
+{id:"T6C01",topic:"Components",q:"What is a schematic?",a:"An electrical wiring diagram using standard component symbols",choices:["A blueprint","A diagram using standard component symbols","A pictorial layout","A bill of materials"],correct:1},
+{id:"T6D01",topic:"Components",q:"What device changes AC into varying DC?",a:"Rectifier",choices:["Transformer","Rectifier","Amplifier","Oscillator"],correct:1},
+{id:"T7A01",topic:"Circuits",q:"What term describes a receiver's ability to detect a signal?",a:"Sensitivity",choices:["Selectivity","Sensitivity","Bandwidth","Dynamic range"],correct:1},
+{id:"T7A02",topic:"Circuits",q:"What is a transceiver?",a:"A device combining transmitter and receiver in one unit",choices:["A type of antenna","Combines transmitter and receiver","A signal processor","A power amplifier"],correct:1},
+{id:"T7B01",topic:"Circuits",q:"What to do if your FM signal is over-deviating?",a:"Speak farther from mic or reduce mic gain",choices:["Increase power","Speak farther from mic or reduce gain","Change frequency","Use a different antenna"],correct:1},
+{id:"T7C01",topic:"Circuits",q:"What is the primary purpose of an SWR meter?",a:"To measure SWR and how well the antenna system is matched",choices:["Measure power output","Measure SWR and antenna match","Tune the receiver","Measure voltage"],correct:1},
+{id:"T7C04",topic:"Circuits",q:"What SWR reading indicates a perfect impedance match?",a:"1:1",choices:["0:0","1:1","2:1","50:1"],correct:1},
+{id:"T7C06",topic:"Circuits",q:"What does an antenna tuner do?",a:"Matches antenna impedance to transceiver output impedance",choices:["Increases gain","Matches impedance","Changes frequency","Amplifies signal"],correct:1},
+{id:"T7D01",topic:"Circuits",q:"What instrument measures electric current?",a:"An ammeter",choices:["A voltmeter","An ammeter","An ohmmeter","A wattmeter"],correct:1},
+{id:"T8A01",topic:"Signals",q:"Which is a form of amplitude modulation?",a:"Single sideband (SSB)",choices:["FM","Single sideband (SSB)","Phase modulation","Spread spectrum"],correct:1},
+{id:"T8A02",topic:"Signals",q:"What modulation is commonly used for VHF/UHF voice repeaters?",a:"FM (Frequency Modulation)",choices:["AM","FM","SSB","CW"],correct:1},
+{id:"T8A05",topic:"Signals",q:"Which emission type has the narrowest bandwidth?",a:"CW (Morse code)",choices:["FM voice","CW (Morse code)","SSB voice","AM voice"],correct:1},
+{id:"T8B07",topic:"Signals",q:"What is the Doppler effect in satellite communications?",a:"Observed frequency change due to relative motion",choices:["Signal fading","Frequency change due to relative motion","Reflection off ionosphere","Time delay"],correct:1},
+{id:"T8C01",topic:"Signals",q:"What method transmits computer data over radio?",a:"Packet radio",choices:["SSB voice","Packet radio","AM broadcast","CW only"],correct:1},
+{id:"T8C08",topic:"Signals",q:"What is FT8?",a:"A digital mode designed for weak signal work",choices:["A type of antenna","A digital mode for weak signals","A repeater system","A satellite protocol"],correct:1},
+{id:"T8D03",topic:"Signals",q:"What is APRS?",a:"Real-time tactical digital communication and position reporting system",choices:["An audio processor","Real-time digital comms and position reporting","An antenna tuning system","A repeater linking protocol"],correct:1},
+{id:"T9A01",topic:"Antennas",q:"What is a beam antenna?",a:"An antenna that concentrates signals in one direction",choices:["A large wire antenna","Concentrates signals in one direction","A vertical omnidirectional antenna","A random wire antenna"],correct:1},
+{id:"T9A02",topic:"Antennas",q:"What type of antenna is a dipole?",a:"A simple straight element — one of the most fundamental antennas",choices:["A Yagi","A simple straight element antenna","A parabolic dish","A loop antenna"],correct:1},
+{id:"T9A03",topic:"Antennas",q:"Approximate length of a quarter-wave vertical for 146 MHz?",a:"19 inches",choices:["12 inches","19 inches","36 inches","58 inches"],correct:1},
+{id:"T9A04",topic:"Antennas",q:"What is a disadvantage of a rubber duck antenna?",a:"Much less efficient with limited range",choices:["Too heavy","Less efficient with limited range","Only works on one band","Requires a ground plane"],correct:1},
+{id:"T9A05",topic:"Antennas",q:"How to make a dipole resonant on a higher frequency?",a:"Shorten it",choices:["Lengthen it","Shorten it","Add a loading coil","Use thicker wire"],correct:1},
+{id:"T9A10",topic:"Antennas",q:"Where does a half-wave dipole radiate strongest?",a:"Broadside (perpendicular to the wire)",choices:["Off the ends","Broadside (perpendicular to wire)","Straight up","All directions equally"],correct:1},
+{id:"T9B01",topic:"Antennas",q:"Why must coax be rated for the frequency of use?",a:"Signal loss increases with frequency",choices:["Won't physically fit","Signal loss increases with frequency","Cable might melt","FCC requires it"],correct:1},
+{id:"T9B03",topic:"Antennas",q:"Why is coax the most common amateur feed line?",a:"Easy to use and can be routed near metal objects",choices:["Lowest loss","Easy to use and works near metal","Cheapest","Highest bandwidth"],correct:1},
+{id:"T9B05",topic:"Antennas",q:"What happens with mismatched antenna/feed line impedance?",a:"Standing waves causing increased signal loss",choices:["Nothing noticeable","Standing waves causing increased loss","Transmitter output increases","Frequency shifts"],correct:1},
+{id:"T0A01",topic:"Safety",q:"What is a safety hazard of a 12-volt storage battery?",a:"Shorting terminals can cause burns, fires, or explosions",choices:["Electric shock only","Shorting can cause burns, fires, or explosions","Completely safe","Only hazardous if wet"],correct:1},
+{id:"T0A03",topic:"Safety",q:"What connects to the green wire in a US AC power plug?",a:"Equipment safety ground",choices:["Hot (line)","Neutral","Equipment safety ground","Signal ground"],correct:2},
+{id:"T0A04",topic:"Safety",q:"What is the purpose of a fuse?",a:"To interrupt power in case of overload",choices:["Regulate voltage","Interrupt power on overload","Filter noise","Store energy"],correct:1},
+{id:"T0A08",topic:"Safety",q:"What is one way to prevent electrical shock?",a:"Use a three-wire cord and grounded outlet",choices:["Wear rubber gloves always","Three-wire cord and grounded outlet","Stand on a metal plate","Work only at night"],correct:1},
+{id:"T0B01",topic:"Safety",q:"When should tower workers wear hard hats and safety glasses?",a:"At all times during tower work",choices:["Only when climbing","At all times during tower work","Only when raising antennas","Only in bad weather"],correct:1},
+{id:"T0B03",topic:"Safety",q:"Is it ever safe to climb a tower without an observer?",a:"Never — always have a qualified observer",choices:["In good weather","Never","When tower is short","When using a harness"],correct:1},
+{id:"T0C01",topic:"Safety",q:"What amateur station radiation can harm humans?",a:"RF radiation at sufficient power and proximity",choices:["Only ionizing radiation","RF radiation at sufficient power and proximity","Only at VHF","Amateur stations cannot cause harm"],correct:1},
+{id:"T0C03",topic:"Safety",q:"Max VHF power before RF exposure evaluation is required?",a:"50 watts PEP at the antenna",choices:["10 watts","25 watts","50 watts PEP at antenna","100 watts"],correct:2},
+{id:"T0C05",topic:"Safety",q:"Why do handhelds have specific RF safety concerns?",a:"Antenna is very close to head and body during use",choices:["Use too much power","Antenna close to head and body","Emit ionizing radiation","Interfere with pacemakers"],correct:1},
+{id:"T0C08",topic:"Safety",q:"What is the FCC's MPE limit based on?",a:"Frequency of RF energy and time of exposure",choices:["Power output only","Frequency and time of exposure","Distance from antenna only","Antenna height"],correct:1},
+];
+
+// =========================================================================
+// DATABASE
+// =========================================================================
+const DB_NAME='HamFlashV4', DB_VER=1;
+let db=null;
+
+function openDB(){
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DB_NAME,DB_VER);
+    r.onupgradeneeded=e=>{
+      const d=e.target.result;
+      if(!d.objectStoreNames.contains('cards'))d.createObjectStore('cards',{keyPath:'id'});
+      if(!d.objectStoreNames.contains('sessions'))d.createObjectStore('sessions',{keyPath:'ts'});
+      if(!d.objectStoreNames.contains('wrong'))d.createObjectStore('wrong',{keyPath:'id'});
+    };
+    r.onsuccess=e=>{db=e.target.result;res(db);};
+    r.onerror=e=>rej(e);
+  });
+}
+
+function dbGet(s,k){return new Promise((r,j)=>{const t=db.transaction(s,'readonly');const q=t.objectStore(s).get(k);q.onsuccess=()=>r(q.result);q.onerror=e=>j(e);});}
+function dbPut(s,d){return new Promise((r,j)=>{const t=db.transaction(s,'readwrite');const q=t.objectStore(s).put(d);q.onsuccess=()=>r();q.onerror=e=>j(e);});}
+function dbGetAll(s){return new Promise((r,j)=>{const t=db.transaction(s,'readonly');const q=t.objectStore(s).getAll();q.onsuccess=()=>r(q.result);q.onerror=e=>j(e);});}
+function dbClear(s){return new Promise((r,j)=>{const t=db.transaction(s,'readwrite');const q=t.objectStore(s).clear();q.onsuccess=()=>r();q.onerror=e=>j(e);});}
+
+// Card state: {id, reviews, correct, wrong, box, lastReview}
+async function getCardState(id){
+  const c=await dbGet('cards',id);
+  return c||{id,reviews:0,correct:0,wrong:0,box:0,lastReview:null};
+}
+async function getAllCardStates(){
+  const all=await dbGetAll('cards');
+  const m={};all.forEach(c=>m[c.id]=c);return m;
+}
+
+async function recordAnswer(id,wasCorrect){
+  const card=await getCardState(id);
+  card.reviews++;
+  card.lastReview=Date.now();
+  if(wasCorrect){
+    card.correct++;
+    card.box=Math.min(3,card.box+1);
+  }else{
+    card.wrong++;
+    card.box=Math.max(0,card.box-1);
+  }
+  await dbPut('cards',card);
+  return card;
+}
+
+// =========================================================================
+// STATE
+// =========================================================================
+const TOPICS=[...new Set(QUESTIONS.map(q=>q.topic))];
+let selectedTopics=new Set(TOPICS);
+let activeSession=null;
+
+function sourceUrl(id){ return `https://hamstudy.org/tech2022/${id}`; }
+
+// =========================================================================
+// NAV
+// =========================================================================
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector(`.nav-tab[data-screen="${name}"]`).classList.add('active');
+  if(name==='study'){activeSession=null;refreshStudyHome();}
+  if(name==='exam'){activeSession=null;document.getElementById('exam-setup').style.display='';document.getElementById('exam-active').style.display='none';}
+  if(name==='stats')refreshStats();
+}
+
+// =========================================================================
+// STUDY HOME
+// =========================================================================
+async function refreshStudyHome(){
+  document.getElementById('topic-selector').style.display='';
+  document.getElementById('study-active').style.display='none';
+  const states=await getAllCardStates();
+  let mastered=0,learning=0,newCount=0;
+  QUESTIONS.forEach(q=>{
+    const s=states[q.id];
+    if(!s||s.box===0)newCount++;
+    else if(s.box>=3)mastered++;
+    else learning++;
+  });
+  document.getElementById('stat-total').textContent=QUESTIONS.length;
+  document.getElementById('stat-mastered').textContent=mastered;
+  document.getElementById('stat-learning').textContent=learning;
+  document.getElementById('stat-new').textContent=newCount;
+
+  const grid=document.getElementById('topic-grid');
+  grid.innerHTML='';
+  for(const topic of TOPICS){
+    const tqs=QUESTIONS.filter(q=>q.topic===topic);
+    let tm=0;tqs.forEach(q=>{const s=states[q.id];if(s&&s.box>=3)tm++;});
+    const pct=Math.round((tm/tqs.length)*100);
+    const btn=document.createElement('button');
+    btn.className='topic-btn'+(selectedTopics.has(topic)?' active':'');
+    btn.innerHTML=`<span>${topic}</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">${tqs.length}q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:${pct}%"></span></span></span>`;
+    btn.onclick=()=>{if(selectedTopics.has(topic)){if(selectedTopics.size>1)selectedTopics.delete(topic);}else selectedTopics.add(topic);refreshStudyHome();};
+    grid.appendChild(btn);
+  }
+
+  const wrong=await dbGetAll('wrong');
+  const wb=document.getElementById('review-wrong-btn');
+  if(wrong.length>0){wb.style.display='';document.getElementById('wrong-count').textContent=wrong.length;}
+  else wb.style.display='none';
+}
+
+// =========================================================================
+// SESSION ENGINE
+// =========================================================================
+async function startStudy(mode){
+  const states=await getAllCardStates();
+  let deck;
+  if(mode==='wrong'){
+    const wrongIds=(await dbGetAll('wrong')).map(w=>w.id);
+    deck=QUESTIONS.filter(q=>wrongIds.includes(q.id));
+    await dbClear('wrong');
+    deck.sort(()=>Math.random()-0.5);
+  }else{
+    const filtered=QUESTIONS.filter(q=>selectedTopics.has(q.topic));
+    const scored=filtered.map(q=>{const s=states[q.id]||{box:0,reviews:0};return{...q,_box:s.box,_reviews:s.reviews};});
+    scored.sort((a,b)=>{if(a._box!==b._box)return a._box-b._box;return a._reviews-b._reviews;});
+    deck=scored.slice(0,20);
+    for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));if(deck[i]._box===deck[j]._box)[deck[i],deck[j]]=[deck[j],deck[i]];}
+  }
+  if(!deck.length)return;
+  activeSession={deck,idx:0,correctCount:0,wrongCount:0,wrongCards:[],mode:'study',answered:false,startTs:Date.now()};
+  document.getElementById('topic-selector').style.display='none';
+  document.getElementById('study-active').style.display='';
+  renderQuestion('study-active');
+}
+
+async function startExam(){
+  const shuffled=[...QUESTIONS].sort(()=>Math.random()-0.5);
+  activeSession={deck:shuffled.slice(0,35),idx:0,correctCount:0,wrongCount:0,wrongCards:[],mode:'exam',answered:false,startTs:Date.now()};
+  document.getElementById('exam-setup').style.display='none';
+  document.getElementById('exam-active').style.display='';
+  renderQuestion('exam-active');
+}
+
+function renderQuestion(cid){
+  const s=activeSession;
+  if(s.idx>=s.deck.length){renderResults(cid);return;}
+  const q=s.deck[s.idx];
+  const n=s.idx+1,total=s.deck.length;
+  s.answered=false;
+
+  // Shuffle choices
+  const indices=q.choices.map((_,i)=>i);
+  for(let i=indices.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[indices[i],indices[j]]=[indices[j],indices[i]];}
+  s._shuffledIndices=indices;
+  s._correctShuffledIdx=indices.indexOf(q.correct);
+
+  const extIcon='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+
+  document.getElementById(cid).innerHTML=`
+    <div class="card-progress">
+      <span class="progress-text">${n} / ${total}</span>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${(n/total)*100}%"></div></div>
+      <span class="progress-text">${q.topic}</span>
+    </div>
+    <div class="live-score" id="live-score-${cid}">
+      <span class="ls-correct">✓ ${s.correctCount}</span>
+      <span class="ls-sep">·</span>
+      <span class="ls-wrong">✗ ${s.wrongCount}</span>
+      <span class="ls-sep">·</span>
+      <span style="color:var(--text-dim)">${total-n} left</span>
+    </div>
+    <div class="q-card animate-slide">
+      <span class="q-id">${q.id}</span>
+      <div class="q-tag">${q.topic}</div>
+      <div class="q-text">${q.q}</div>
+    </div>
+    <div class="options-list" id="opts-${cid}">
+      ${indices.map((origIdx,di)=>`
+        <button class="option-btn" data-di="${di}" onclick="handleAnswer(${di},'${cid}')">
+          <span class="opt-letter">${String.fromCharCode(65+di)}</span>
+          <span class="opt-text">${q.choices[origIdx]}</span>
+        </button>
+      `).join('')}
+    </div>
+    <div class="answer-explain" id="ae-${cid}">
+      <div class="ae-label">✓ Correct Answer</div>
+      <div class="ae-text">${q.a}</div>
+      <a class="ae-source" href="${sourceUrl(q.id)}" target="_blank" rel="noopener">
+        ${extIcon} Study ${q.id} on HamStudy.org
+      </a>
+    </div>
+    <button class="next-btn" id="nb-${cid}" onclick="nextQuestion('${cid}')">NEXT →</button>
+    <div class="keyboard-hint"><kbd>A</kbd>–<kbd>D</kbd> answer · <kbd>Enter</kbd> next · <kbd>Esc</kbd> end</div>
+  `;
+}
+
+async function handleAnswer(di,cid){
+  const s=activeSession;
+  if(s.answered)return;
+  s.answered=true;
+  const q=s.deck[s.idx];
+  const cdi=s._correctShuffledIdx;
+  const ok=(di===cdi);
+
+  const opts=document.querySelectorAll(`#opts-${cid} .option-btn`);
+  opts.forEach((o,i)=>{
+    if(i===di&&ok)o.classList.add('selected-correct');
+    else if(i===di&&!ok)o.classList.add('selected-wrong');
+    else if(i===cdi)o.classList.add('reveal-correct');
+    else o.classList.add('disabled');
+  });
+
+  document.getElementById(`ae-${cid}`).classList.add('visible');
+  document.getElementById(`nb-${cid}`).classList.add('visible');
+
+  if(ok)s.correctCount++;
+  else{s.wrongCount++;s.wrongCards.push({...q,userChoice:q.choices[s._shuffledIndices[di]]});}
+
+  const ls=document.getElementById(`live-score-${cid}`);
+  if(ls)ls.innerHTML=`
+    <span class="ls-correct ${ok?'flash-green':''}">✓ ${s.correctCount}</span>
+    <span class="ls-sep">·</span>
+    <span class="ls-wrong ${!ok?'flash-red':''}">✗ ${s.wrongCount}</span>
+    <span class="ls-sep">·</span>
+    <span style="color:var(--text-dim)">${s.deck.length-s.idx-1} left</span>
+  `;
+
+  await recordAnswer(q.id,ok);
+}
+
+function nextQuestion(cid){activeSession.idx++;renderQuestion(cid);}
+
+async function renderResults(cid){
+  const s=activeSession;
+  const total=s.deck.length;
+  const pct=Math.round((s.correctCount/total)*100);
+  const isExam=s.mode==='exam';
+  const passed=isExam?pct>=74:null;
+  const elapsed=Math.round((Date.now()-s.startTs)/1000);
+  const mins=Math.floor(elapsed/60),secs=elapsed%60;
+
+  // Save wrong cards for later review
+  for(const w of s.wrongCards)await dbPut('wrong',{id:w.id,userChoice:w.userChoice,ts:Date.now()});
+
+  // Save session record
+  await dbPut('sessions',{
+    ts:Date.now(),
+    type:s.mode,
+    total:total,
+    correct:s.correctCount,
+    wrong:s.wrongCount,
+    pct:pct,
+    passed:passed,
+    elapsed:elapsed
+  });
+
+  let gradeHtml='';
+  if(isExam){
+    gradeHtml=`<div class="results-grade ${passed?'pass':'fail'}">${passed?'✓ PASSED':'✗ NOT YET'}</div>
+      <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:8px;">${passed?'You would pass the Technician class exam!':'Need 26/35 (74%) to pass. Keep studying!'}</p>`;
+  }else{
+    const r=pct>=90?'Excellent!':pct>=70?'Good progress!':pct>=50?'Keep practicing!':'Focus on weak areas';
+    gradeHtml=`<div class="results-grade" style="color:${pct>=70?'var(--green)':'var(--orange)'}">${r}</div>`;
+  }
+
+  const extIcon='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+
+  let wrongHtml='';
+  if(s.wrongCards.length>0){
+    wrongHtml=`<div style="text-align:left;margin-top:24px;">
+      <h3 style="font-family:'Space Mono',monospace;font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--red);margin-bottom:12px;">✗ Questions You Missed (${s.wrongCards.length})</h3>
+      <div>${s.wrongCards.map(w=>`<div class="wrong-item">
+        <div class="wi-tag">${w.id} · ${w.topic}</div>
+        <div class="wi-q">${w.q}</div>
+        <div class="wi-your">✗ Your answer: ${w.userChoice}</div>
+        <div class="wi-correct">✓ Correct: ${w.a}</div>
+        <a class="ae-source" href="${sourceUrl(w.id)}" target="_blank" rel="noopener" style="margin-top:8px;">${extIcon} Study ${w.id}</a>
+      </div>`).join('')}</div>
+    </div>`;
+  }
+
+  document.getElementById(cid).innerHTML=`
+    <div class="results-card animate-in">
+      <div class="results-score">${pct}%</div>
+      <div class="results-label">${s.correctCount} of ${total} correct · ${mins}m ${secs}s</div>
+      ${gradeHtml}
+      <div class="results-detail">
+        <div class="detail-item"><div class="detail-label">Correct</div><div class="detail-value" style="color:var(--green)">${s.correctCount}</div></div>
+        <div class="detail-item"><div class="detail-label">Wrong</div><div class="detail-value" style="color:var(--red)">${s.wrongCount}</div></div>
+      </div>
+      ${wrongHtml}
+    </div>
+    <div class="btn-row">
+      ${s.wrongCards.length>0?`<button class="start-btn" onclick="reviewWrongNow('${cid}')">↻ DRILL WRONG ANSWERS NOW (${s.wrongCards.length})</button>`:''}
+      ${isExam?`<button class="start-btn ${s.wrongCards.length>0?'secondary':''}" onclick="startExam()">↻ RETAKE EXAM</button>`:''}
+      <button class="start-btn secondary" onclick="showScreen('${isExam?'exam':'study'}')">← BACK</button>
+    </div>
+  `;
+}
+
+async function reviewWrongNow(cid){
+  const wrongs=await dbGetAll('wrong');
+  const ids=wrongs.map(w=>w.id);
+  const deck=QUESTIONS.filter(q=>ids.includes(q.id)).sort(()=>Math.random()-0.5);
+  if(!deck.length)return;
+  await dbClear('wrong');
+  const isExam=activeSession&&activeSession.mode==='exam';
+  activeSession={deck,idx:0,correctCount:0,wrongCount:0,wrongCards:[],mode:isExam?'exam':'study',answered:false,startTs:Date.now()};
+  renderQuestion(cid);
+}
+
+// =========================================================================
+// STATS — fully rebuilt
+// =========================================================================
+async function refreshStats(){
+  const states=await getAllCardStates();
+  const sessions=await dbGetAll('sessions');
+
+  // --- Mastery ring ---
+  let totalMastered=0;
+  QUESTIONS.forEach(q=>{const s=states[q.id];if(s&&s.box>=3)totalMastered++;});
+  const mp=Math.round((totalMastered/QUESTIONS.length)*100);
+  document.getElementById('mastery-pct').textContent=mp+'%';
+  const circ=2*Math.PI*68;
+  const ring=document.getElementById('mastery-ring-fill');
+  // Force reflow for animation
+  ring.style.transition='none';
+  ring.style.strokeDashoffset=circ;
+  ring.getBoundingClientRect();
+  ring.style.transition='stroke-dashoffset 1s ease';
+  setTimeout(()=>{ring.style.strokeDashoffset=circ-(circ*mp/100);},50);
+
+  // --- Overall accuracy ---
+  let totalReviews=0,totalCorrect=0;
+  Object.values(states).forEach(s=>{totalReviews+=s.reviews||0;totalCorrect+=s.correct||0;});
+  document.getElementById('acc-total-reviews').textContent=totalReviews;
+  document.getElementById('acc-total-correct').textContent=totalCorrect;
+  document.getElementById('acc-pct').textContent=totalReviews>0?Math.round((totalCorrect/totalReviews)*100)+'%':'—';
+
+  const examSessions=sessions.filter(s=>s.type==='exam'&&s.pct!==undefined);
+  const bestExam=examSessions.length?Math.max(...examSessions.map(e=>e.pct))+'%':'—';
+  document.getElementById('acc-streak').textContent=bestExam;
+
+  // --- Topic breakdown (accuracy-based) ---
+  const te=document.getElementById('topic-stats');
+  te.innerHTML='';
+  TOPICS.forEach(topic=>{
+    const tqs=QUESTIONS.filter(q=>q.topic===topic);
+    let tReviews=0,tCorrect=0;
+    tqs.forEach(q=>{const s=states[q.id];if(s){tReviews+=s.reviews||0;tCorrect+=s.correct||0;}});
+    const pct=tReviews>0?Math.round((tCorrect/tReviews)*100):0;
+    const colorClass=pct>=70?'':pct>=40?' medium':' low';
+    te.innerHTML+=`<div class="topic-stat-row">
+      <span class="tsr-name">${topic}</span>
+      <span class="tsr-bar"><span class="tsr-bar-fill acc-bar-fill${colorClass}" style="width:${tReviews>0?pct:0}%"></span></span>
+      <span class="tsr-pct">${tReviews>0?pct+'%':'—'}</span>
+      <span class="tsr-frac">${tCorrect}/${tReviews}</span>
+    </div>`;
+  });
+
+  // --- Session history (last 10) ---
+  const hist=document.getElementById('session-history');
+  const sorted=[...sessions].sort((a,b)=>b.ts-a.ts).slice(0,10);
+  if(sorted.length===0){
+    hist.innerHTML='<p style="color:var(--text-dim);font-size:0.85rem;">No sessions yet. Start studying!</p>';
+    return;
+  }
+  hist.innerHTML=sorted.map(s=>{
+    const d=new Date(s.ts);
+    const dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const isExam=s.type==='exam';
+    const scoreColor=s.pct>=74?'var(--green)':s.pct>=50?'var(--orange)':'var(--red)';
+    return `<div class="history-item">
+      <span class="hi-type ${isExam?'exam':'study'}">${isExam?'Exam':'Study'}</span>
+      <span class="hi-date">${dateStr}</span>
+      <span class="hi-score" style="color:${scoreColor}">${s.pct}% <span style="font-weight:400;font-size:0.7rem;color:var(--text-dim)">(${s.correct}/${s.total})</span></span>
+    </div>`;
+  }).join('');
+}
+
+async function resetProgress(){
+  if(!confirm('Reset ALL progress? This cannot be undone.'))return;
+  await dbClear('cards');await dbClear('sessions');await dbClear('wrong');
+  showScreen('study');
+}
+
+// =========================================================================
+// KEYBOARD
+// =========================================================================
+document.addEventListener('keydown',e=>{
+  if(!activeSession||!activeSession.deck)return;
+  const isS=document.getElementById('screen-study').classList.contains('active');
+  const isE=document.getElementById('screen-exam').classList.contains('active');
+  if(!isS&&!isE)return;
+  const cid=isS?'study-active':'exam-active';
+
+  if(!activeSession.answered){
+    if(e.key==='a'||e.key==='A'||e.key==='1')handleAnswer(0,cid);
+    if(e.key==='b'||e.key==='B'||e.key==='2')handleAnswer(1,cid);
+    if(e.key==='c'||e.key==='C'||e.key==='3')handleAnswer(2,cid);
+    if(e.key==='d'||e.key==='D'||e.key==='4')handleAnswer(3,cid);
+  }else{
+    if(e.code==='Space'||e.code==='Enter'){e.preventDefault();nextQuestion(cid);}
+  }
+  if(e.code==='Escape')showScreen(isS?'study':'exam');
+});
+
+// =========================================================================
+// INIT
+// =========================================================================
+(async()=>{await openDB();refreshStudyHome();})();
+</script>
+
+
+</body></html>
