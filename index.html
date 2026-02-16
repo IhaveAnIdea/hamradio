@@ -204,12 +204,22 @@ kbd{display:inline-block;padding:2px 6px;background:var(--bg-surface);border:1px
 .acc-bar-fill.low{background:var(--red);}
 
 /* session history list */
-.history-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,0,0,0.15);border-radius:8px;margin-bottom:6px;font-size:0.82rem;}
-.history-item .hi-type{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-right:10px;}
+.history-entry{margin-bottom:6px;}
+.history-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(0,0,0,0.15);border-radius:8px;font-size:0.82rem;}
+.history-entry.has-wrong .history-item{border-radius:8px 8px 0 0;}
+.history-entry.expanded .history-item{border-radius:8px 8px 0 0;}
+.history-item .hi-type{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-right:10px;flex-shrink:0;}
 .history-item .hi-type.study{background:rgba(245,166,35,0.1);color:var(--amber);}
 .history-item .hi-type.exam{background:rgba(93,173,226,0.1);color:var(--blue);}
 .history-item .hi-date{color:var(--text-dim);font-size:0.75rem;flex:1;}
 .history-item .hi-score{font-family:'Space Mono',monospace;font-weight:700;}
+.hi-review-btn{background:none;border:1px solid rgba(231,76,60,0.25);border-radius:5px;color:var(--text-dim);font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.5px;padding:3px 8px;margin-left:10px;cursor:pointer;transition:var(--transition);flex-shrink:0;-webkit-tap-highlight-color:transparent;white-space:nowrap;}
+.hi-review-btn:hover{background:var(--red-bg);color:var(--red);border-color:rgba(231,76,60,0.4);}
+.hi-review-btn.active{background:var(--red-bg);color:var(--red);border-color:rgba(231,76,60,0.4);}
+.hi-wrong-panel{display:none;background:rgba(0,0,0,0.1);border:1px solid rgba(231,76,60,0.08);border-top:none;border-radius:0 0 8px 8px;padding:10px 12px;animation:fadeIn 0.3s ease;}
+.hi-wrong-panel.visible{display:block;}
+.hi-wrong-panel .wrong-item{margin-bottom:6px;}
+.hi-wrong-panel .wrong-item:last-child{margin-bottom:0;}
 
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 @keyframes slideIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
@@ -1437,7 +1447,7 @@ async function renderResults(cid){
   // Save wrong cards for later review
   for(const w of s.wrongCards)await dbPut('wrong',{id:w.id,userChoice:w.userChoice,ts:Date.now()});
 
-  // Save session record
+  // Save session record (include wrong card details for later review)
   await dbPut('sessions',{
     ts:Date.now(),
     type:s.mode,
@@ -1446,7 +1456,8 @@ async function renderResults(cid){
     wrong:s.wrongCount,
     pct:pct,
     passed:passed,
-    elapsed:elapsed
+    elapsed:elapsed,
+    wrongCards:s.wrongCards.map(w=>({id:w.id,topic:w.topic,q:w.q,a:w.a,userChoice:w.userChoice}))
   });
 
   let gradeHtml='';
@@ -1565,17 +1576,41 @@ async function refreshStats(){
     hist.innerHTML='<p style="color:var(--text-dim);font-size:0.85rem;">No sessions yet. Start studying!</p>';
     return;
   }
-  hist.innerHTML=sorted.map(s=>{
+  const extIcon='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+  hist.innerHTML=sorted.map((s,i)=>{
     const d=new Date(s.ts);
     const dateStr=d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' '+d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
     const isExam=s.type==='exam';
     const scoreColor=s.pct>=74?'var(--green)':s.pct>=50?'var(--orange)':'var(--red)';
-    return `<div class="history-item">
-      <span class="hi-type ${isExam?'exam':'study'}">${isExam?'Exam':'Study'}</span>
-      <span class="hi-date">${dateStr}</span>
-      <span class="hi-score" style="color:${scoreColor}">${s.pct}% <span style="font-weight:400;font-size:0.7rem;color:var(--text-dim)">(${s.correct}/${s.total})</span></span>
+    const hasWrong=s.wrongCards&&s.wrongCards.length>0;
+    const reviewBtn=hasWrong?`<button class="hi-review-btn" onclick="toggleSessionWrong(${i})" id="hi-btn-${i}">${s.wrongCards.length} missed</button>`:'';
+    let wrongPanel='';
+    if(hasWrong){
+      wrongPanel=`<div class="hi-wrong-panel" id="hi-panel-${i}">${s.wrongCards.map(w=>{
+        const wFig=FIGURE_MAP[w.id]||null;
+        const wFigHtml=wFig?'<div class="q-figure" style="margin:8px 0">'+getFigureSVG(wFig)+'</div>':'';
+        return '<div class="wrong-item"><div class="wi-tag">'+w.id+' · '+w.topic+'</div><div class="wi-q">'+w.q+'</div>'+wFigHtml+'<div class="wi-your">✗ Your answer: '+w.userChoice+'</div><div class="wi-correct">✓ Correct: '+w.a+'</div><a class="ae-source" href="'+sourceUrl(w.id)+'" target="_blank" rel="noopener" style="margin-top:8px;">'+extIcon+' Study '+w.id+' on HamBook</a></div>';
+      }).join('')}</div>`;
+    }
+    return `<div class="history-entry${hasWrong?' has-wrong':''}">
+      <div class="history-item">
+        <span class="hi-type ${isExam?'exam':'study'}">${isExam?'Exam':'Study'}</span>
+        <span class="hi-date">${dateStr}</span>
+        <span class="hi-score" style="color:${scoreColor}">${s.pct}% <span style="font-weight:400;font-size:0.7rem;color:var(--text-dim)">(${s.correct}/${s.total})</span></span>
+        ${reviewBtn}
+      </div>
+      ${wrongPanel}
     </div>`;
   }).join('');
+}
+
+function toggleSessionWrong(i){
+  const panel=document.getElementById('hi-panel-'+i);
+  const btn=document.getElementById('hi-btn-'+i);
+  if(!panel)return;
+  const show=!panel.classList.contains('visible');
+  panel.classList.toggle('visible',show);
+  btn.classList.toggle('active',show);
 }
 
 async function resetProgress(){
