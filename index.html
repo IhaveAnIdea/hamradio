@@ -1593,13 +1593,27 @@ async function refreshStats(){
     const mins=Math.floor(elapsed/60),secs=elapsed%60;
     const currentPct=answered>0?Math.round((s.correctCount/answered)*100):0;
     const scoreColor=currentPct>=74?'var(--green)':currentPct>=50?'var(--orange)':'var(--red)';
+    const extIconCur='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>';
+    const hasCurWrong=s.wrongCards&&s.wrongCards.length>0;
+    let curReviewBtn='';
+    let curWrongPanel='';
+    if(hasCurWrong){
+      curReviewBtn=`<button class="hi-review-btn" onclick="toggleSessionWrong('cur')" id="hi-btn-cur">${s.wrongCards.length} missed</button>`;
+      curWrongPanel=`<div class="hi-wrong-panel" id="hi-panel-cur">${s.wrongCards.map(w=>{
+        const wFig=FIGURE_MAP[w.id]||null;
+        const wFigHtml=wFig?'<div class="q-figure" style="margin:8px 0">'+getFigureSVG(wFig)+'</div>':'';
+        return '<div class="wrong-item"><div class="wi-tag">'+w.id+' · '+w.topic+'</div><div class="wi-q">'+w.q+'</div>'+wFigHtml+'<div class="wi-your">✗ Your answer: '+w.userChoice+'</div><div class="wi-correct">✓ Correct: '+w.a+'</div><a class="ae-source" href="'+sourceUrl(w.id)+'" target="_blank" rel="noopener" style="margin-top:8px;">'+extIconCur+' Study '+w.id+' on HamBook</a></div>';
+      }).join('')}</div>`;
+    }
     curSection.style.display='';
-    curInfo.innerHTML=`<div class="history-entry">
+    curInfo.innerHTML=`<div class="history-entry${hasCurWrong?' has-wrong':''}">
       <div class="history-item" style="border:1px solid rgba(245,166,35,0.2);background:rgba(245,166,35,0.05);">
         <span class="hi-type ${isExam?'exam':'study'}" style="border:1px solid currentColor;">${isExam?'Exam':'Study'}</span>
         <span class="hi-date">In progress · ${mins}m ${secs}s · ${answered}/${total} answered</span>
         <span class="hi-score" style="color:${scoreColor}">${answered>0?currentPct+'%':'—'} <span style="font-weight:400;font-size:0.7rem;color:var(--text-dim)">(${s.correctCount}/${answered})</span></span>
+        ${curReviewBtn}
       </div>
+      ${curWrongPanel}
     </div>`;
   }else{
     curSection.style.display='none';
@@ -1649,13 +1663,13 @@ async function refreshStats(){
   }).join('');
 }
 
-function toggleSessionWrong(i){
-  const panel=document.getElementById('hi-panel-'+i);
-  const btn=document.getElementById('hi-btn-'+i);
+function toggleSessionWrong(id){
+  const panel=document.getElementById('hi-panel-'+id);
+  const btn=document.getElementById('hi-btn-'+id);
   if(!panel)return;
   const show=!panel.classList.contains('visible');
   panel.classList.toggle('visible',show);
-  btn.classList.toggle('active',show);
+  if(btn)btn.classList.toggle('active',show);
 }
 
 async function resetProgress(){
