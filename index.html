@@ -1216,13 +1216,8 @@ function getFigureSVG(fig){
 // STATE
 // =========================================================================
 const TOPICS=[...new Set(QUESTIONS.map(q=>q.topic))];
-let selectedTopics=new Set();
-// Default: select a random single topic until user picks
-function initRandomTopic(){
-  const idx=Math.floor(Math.random()*TOPICS.length);
-  selectedTopics.add(TOPICS[idx]);
-}
-initRandomTopic();
+const RANDOM_MIX='Random Mix';
+let selectedTopics=new Set([RANDOM_MIX]);
 let userHasPickedTopic=false;
 let activeSession=null;
 
@@ -1348,6 +1343,21 @@ async function refreshStudyHome(){
 
   const grid=document.getElementById('topic-grid');
   grid.innerHTML='';
+
+  // Random Mix button
+  const allMastered=QUESTIONS.filter(q=>{const s=states[q.id];return s&&s.box>=3;}).length;
+  const allPct=Math.round((allMastered/QUESTIONS.length)*100);
+  const rmBtn=document.createElement('button');
+  rmBtn.className='topic-btn'+(selectedTopics.has(RANDOM_MIX)?' active':'');
+  rmBtn.innerHTML=`<span>🎲 ${RANDOM_MIX}</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">${QUESTIONS.length}q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:${allPct}%"></span></span></span>`;
+  rmBtn.onclick=()=>{
+    selectedTopics.clear();
+    selectedTopics.add(RANDOM_MIX);
+    userHasPickedTopic=true;
+    refreshStudyHome();
+  };
+  grid.appendChild(rmBtn);
+
   for(const topic of TOPICS){
     const tqs=QUESTIONS.filter(q=>q.topic===topic);
     let tm=0;tqs.forEach(q=>{const s=states[q.id];if(s&&s.box>=3)tm++;});
@@ -1356,14 +1366,13 @@ async function refreshStudyHome(){
     btn.className='topic-btn'+(selectedTopics.has(topic)?' active':'');
     btn.innerHTML=`<span>${topic}</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">${tqs.length}q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:${pct}%"></span></span></span>`;
     btn.onclick=()=>{
-      if(!userHasPickedTopic){
-        // First user click: start fresh with just this topic
-        userHasPickedTopic=true;
-        selectedTopics.clear();
-        selectedTopics.add(topic);
+      userHasPickedTopic=true;
+      selectedTopics.delete(RANDOM_MIX);
+      if(selectedTopics.has(topic)){
+        if(selectedTopics.size>1)selectedTopics.delete(topic);
+        else{selectedTopics.clear();selectedTopics.add(RANDOM_MIX);}
       }else{
-        if(selectedTopics.has(topic)){if(selectedTopics.size>1)selectedTopics.delete(topic);}
-        else selectedTopics.add(topic);
+        selectedTopics.add(topic);
       }
       refreshStudyHome();
     };
@@ -1388,11 +1397,17 @@ async function startStudy(mode){
     await dbClear('wrong');
     deck.sort(()=>Math.random()-0.5);
   }else{
-    const filtered=QUESTIONS.filter(q=>selectedTopics.has(q.topic));
-    const scored=filtered.map(q=>{const s=states[q.id]||{box:0,reviews:0};return{...q,_box:s.box,_reviews:s.reviews};});
-    scored.sort((a,b)=>{if(a._box!==b._box)return a._box-b._box;return a._reviews-b._reviews;});
-    deck=scored.slice(0,20);
-    for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));if(deck[i]._box===deck[j]._box)[deck[i],deck[j]]=[deck[j],deck[i]];}
+    const isRandom=selectedTopics.has(RANDOM_MIX);
+    const filtered=isRandom?[...QUESTIONS]:QUESTIONS.filter(q=>selectedTopics.has(q.topic));
+    if(isRandom){
+      filtered.sort(()=>Math.random()-0.5);
+      deck=filtered.slice(0,20);
+    }else{
+      const scored=filtered.map(q=>{const s=states[q.id]||{box:0,reviews:0};return{...q,_box:s.box,_reviews:s.reviews};});
+      scored.sort((a,b)=>{if(a._box!==b._box)return a._box-b._box;return a._reviews-b._reviews;});
+      deck=scored.slice(0,20);
+      for(let i=deck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));if(deck[i]._box===deck[j]._box)[deck[i],deck[j]]=[deck[j],deck[i]];}
+    }
   }
   if(!deck.length)return;
   activeSession={deck,idx:0,correctCount:0,wrongCount:0,wrongCards:[],mode:'study',answered:false,startTs:Date.now()};
