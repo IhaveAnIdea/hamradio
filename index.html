@@ -353,9 +353,9 @@ kbd{display:inline-block;padding:2px 6px;background:var(--bg-surface);border:1px
 </header>
 
 <nav class="nav-tabs">
-  <button class="nav-tab active" data-screen="study" onclick="showScreen(&#39;study&#39;)">Study</button>
-  <button class="nav-tab" data-screen="exam" onclick="showScreen(&#39;exam&#39;)">Exam</button>
-  <button class="nav-tab" data-screen="stats" onclick="showScreen(&#39;stats&#39;)">Stats</button>
+  <button class="nav-tab active" data-screen="study" onclick="showScreen('study')">Study</button>
+  <button class="nav-tab" data-screen="exam" onclick="showScreen('exam')">Exam</button>
+  <button class="nav-tab" data-screen="stats" onclick="showScreen('stats')">Stats</button>
 </nav>
 
 <!-- STUDY -->
@@ -369,8 +369,8 @@ kbd{display:inline-block;padding:2px 6px;background:var(--bg-surface);border:1px
   <div id="topic-selector" style="display:none;">
     <div class="topic-grid" id="topic-grid"><button class="topic-btn active"><span>FCC Rules</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">17q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Operating</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">11q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Propagation</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">10q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Station Setup</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">4q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Electrical</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">15q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn"><span>Components</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">10q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Circuits</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">7q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Signals</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">7q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Antennas</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">9q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button><button class="topic-btn active"><span>Safety</span><span style="display:flex;align-items:center;gap:6px;"><span class="topic-count">10q</span><span class="topic-mastery"><span class="topic-mastery-fill" style="width:0%"></span></span></span></button></div>
     <div class="btn-row">
-      <button class="start-btn" onclick="startStudy(&#39;all&#39;)">▶ STUDY SESSION (20 cards)</button>
-      <button class="start-btn secondary" id="review-wrong-btn" onclick="startStudy(&#39;wrong&#39;)" style="display:none;">↻ REVIEW WRONG ANSWERS (<span id="wrong-count">0</span>)</button>
+      <button class="start-btn" onclick="startStudy('all')">▶ STUDY SESSION (20 cards)</button>
+      <button class="start-btn secondary" id="review-wrong-btn" onclick="startStudy('wrong')" style="display:none;">↻ REVIEW WRONG ANSWERS (<span id="wrong-count">0</span>)</button>
     </div>
   </div>
   <div id="study-active" style="display:none;">
