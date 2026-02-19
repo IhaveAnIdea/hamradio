@@ -181,6 +181,23 @@ body::after{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backgr
 .q-figure .fig-label{fill:var(--text-secondary) !important;}
 .q-figure .fig-title{fill:var(--text-dim) !important;}
 .q-figure .fig-comp{stroke:var(--amber) !important;}
+.q-figure{cursor:pointer;position:relative;}
+.q-figure::after{content:'⤢';position:absolute;top:6px;right:8px;font-size:0.75rem;color:var(--text-dim);opacity:0.5;transition:opacity 0.2s;}
+.q-figure:hover::after{opacity:1;}
+
+/* FIGURE MODAL */
+.fig-modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;padding:20px;-webkit-tap-highlight-color:transparent;cursor:pointer;}
+.fig-modal-overlay.visible{display:flex;}
+.fig-modal-content{background:var(--bg-card);border:1px solid rgba(245,166,35,0.2);border-radius:var(--radius-lg);padding:24px;max-width:95vw;max-height:90vh;overflow:auto;position:relative;cursor:default;}
+.fig-modal-content svg{width:100%;height:auto;min-width:380px;}
+.fig-modal-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--text-dim);font-size:1.4rem;cursor:pointer;padding:4px 8px;transition:var(--transition);line-height:1;}
+.fig-modal-close:hover{color:var(--text-primary);}
+.fig-modal-content .fig-wire{stroke:var(--text-primary) !important;}
+.fig-modal-content .fig-dot{fill:var(--text-primary) !important;}
+.fig-modal-content .fig-text{fill:var(--amber) !important;}
+.fig-modal-content .fig-label{fill:var(--text-secondary) !important;}
+.fig-modal-content .fig-title{fill:var(--text-dim) !important;}
+.fig-modal-content .fig-comp{stroke:var(--amber) !important;}
 
 /* OPTIONS */
 .options-list{display:grid;gap:6px;margin-bottom:10px;}
@@ -994,9 +1011,7 @@ function getFigureSVG(fig){
   <polyline points="60,100 68,85 84,115 100,85 116,115 132,85 140,100" class="fig-comp"/>
   <line x1="140" y1="100" x2="180" y2="100" class="fig-wire"/>
   <circle cx="60" cy="100" r="2" class="fig-dot"/>
-  <!-- Label 1 -->
   <text x="100" y="75" text-anchor="middle" class="fig-text">1</text>
-  <text x="100" y="133" text-anchor="middle" class="fig-label">Resistor</text>
   <!-- Transistor 2 - NPN -->
   <line x1="180" y1="100" x2="210" y2="100" class="fig-wire"/>
   <line x1="210" y1="70" x2="210" y2="130" class="fig-comp" stroke-width="3"/>
@@ -1006,18 +1021,14 @@ function getFigureSVG(fig){
   <polygon points="245,140 235,130 240,138" fill="#F5A623" stroke="none"/>
   <line x1="245" y1="60" x2="245" y2="45" class="fig-wire"/>
   <line x1="245" y1="140" x2="245" y2="200" class="fig-wire"/>
-  <!-- Label 2 -->
   <text x="195" y="75" text-anchor="middle" class="fig-text">2</text>
-  <text x="225" y="165" text-anchor="middle" class="fig-label">Transistor</text>
   <!-- Lamp 3 -->
   <line x1="245" y1="45" x2="320" y2="45" class="fig-wire"/>
   <circle cx="320" cy="45" r="16" class="fig-comp"/>
   <line x1="311" y1="36" x2="329" y2="54" class="fig-comp"/>
   <line x1="311" y1="54" x2="329" y2="36" class="fig-comp"/>
   <line x1="320" y1="61" x2="320" y2="80" class="fig-wire"/>
-  <!-- Label 3 -->
   <text x="348" y="42" class="fig-text">3</text>
-  <text x="348" y="55" class="fig-label">Lamp</text>
   <!-- Battery 4 -->
   <line x1="320" y1="80" x2="320" y2="100" class="fig-wire"/>
   <line x1="305" y1="100" x2="335" y2="100" class="fig-comp" stroke-width="2.5"/>
@@ -1027,9 +1038,7 @@ function getFigureSVG(fig){
   <line x1="320" y1="136" x2="320" y2="200" class="fig-wire"/>
   <text x="340" y="106" class="fig-text">+</text>
   <text x="340" y="140" class="fig-text">−</text>
-  <!-- Label 4 -->
   <text x="355" y="116" class="fig-text">4</text>
-  <text x="355" y="129" class="fig-label">Battery</text>
   <!-- Ground connections -->
   <line x1="245" y1="200" x2="320" y2="200" class="fig-wire"/>
   <circle cx="280" cy="200" r="2" class="fig-dot"/>
@@ -1038,11 +1047,7 @@ function getFigureSVG(fig){
   <line x1="265" y1="215" x2="295" y2="215" class="fig-comp"/>
   <line x1="270" y1="222" x2="290" y2="222" class="fig-comp"/>
   <line x1="275" y1="229" x2="285" y2="229" class="fig-comp"/>
-  <!-- Label 5 -->
   <text x="300" y="228" class="fig-text">5</text>
-  <text x="300" y="241" class="fig-label">Ground</text>
-  <!-- Input label -->
-  <text x="30" y="90" class="fig-label">Input</text>
 </svg>`;
 
   if(fig==='T2') return `<svg viewBox="0 0 520 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:520px;height:auto;display:block;margin:0 auto;">
@@ -1067,7 +1072,6 @@ function getFigureSVG(fig){
   <line x1="48" y1="60" x2="62" y2="60" class="fig-comp" stroke-width="1"/>
   <line x1="68" y1="60" x2="80" y2="60" class="fig-wire"/>
   <text x="55" y="46" text-anchor="middle" class="fig-text">2</text>
-  <text x="55" y="82" text-anchor="middle" class="fig-label">Fuse</text>
   <!-- Switch 3 SPST -->
   <line x1="80" y1="60" x2="92" y2="60" class="fig-wire"/>
   <circle cx="92" cy="60" r="3" class="fig-comp" fill="none"/>
@@ -1075,7 +1079,6 @@ function getFigureSVG(fig){
   <circle cx="120" cy="60" r="3" class="fig-comp" fill="none"/>
   <line x1="123" y1="60" x2="140" y2="60" class="fig-wire"/>
   <text x="106" y="40" text-anchor="middle" class="fig-text">3</text>
-  <text x="106" y="82" text-anchor="middle" class="fig-label">Switch</text>
   <!-- Transformer 4 -->
   <line x1="140" y1="60" x2="155" y2="60" class="fig-wire"/>
   <!-- Primary coil -->
@@ -1093,14 +1096,12 @@ function getFigureSVG(fig){
   <path d="M229,100 C229,92 221,92 221,100 C221,92 213,92 213,100 C213,92 205,92 205,100 C205,92 197,92 197,100" class="fig-comp" fill="none"/>
   <line x1="229" y1="100" x2="250" y2="100" class="fig-wire"/>
   <text x="192" y="120" text-anchor="middle" class="fig-text">4</text>
-  <text x="192" y="132" text-anchor="middle" class="fig-label">Transformer</text>
   <!-- Rectifier Diode 5 -->
   <line x1="250" y1="60" x2="270" y2="60" class="fig-wire"/>
   <polygon points="270,50 270,70 290,60" class="fig-comp" fill="none"/>
   <line x1="290" y1="50" x2="290" y2="70" class="fig-comp" stroke-width="2.5"/>
   <line x1="290" y1="60" x2="310" y2="60" class="fig-wire"/>
   <text x="280" y="44" text-anchor="middle" class="fig-text">5</text>
-  <text x="280" y="84" text-anchor="middle" class="fig-label">Diode</text>
   <!-- Capacitor 6 -->
   <circle cx="310" cy="60" r="2" class="fig-dot"/>
   <line x1="310" y1="60" x2="310" y2="68" class="fig-wire"/>
@@ -1108,7 +1109,6 @@ function getFigureSVG(fig){
   <path d="M298,76 Q310,82 322,76" class="fig-comp" stroke-width="2"/>
   <line x1="310" y1="76" x2="310" y2="100" class="fig-wire"/>
   <text x="326" y="76" class="fig-text">6</text>
-  <text x="326" y="88" class="fig-label">Cap</text>
   <!-- Wire to regulator -->
   <line x1="310" y1="60" x2="345" y2="60" class="fig-wire"/>
   <!-- Regulator IC 7 -->
@@ -1128,7 +1128,6 @@ function getFigureSVG(fig){
   <polygon points="432,71 428,76 431,74" fill="#F5A623" stroke="none"/>
   <line x1="410" y1="85" x2="410" y2="100" class="fig-wire"/>
   <text x="436" y="76" class="fig-text">8</text>
-  <text x="436" y="88" class="fig-label">LED</text>
   <!-- Variable Resistor 9 -->
   <line x1="410" y1="60" x2="450" y2="60" class="fig-wire"/>
   <polyline points="450,60 454,48 462,72 470,48 478,72 486,48 490,60" class="fig-comp"/>
@@ -1137,14 +1136,11 @@ function getFigureSVG(fig){
   <polygon points="480,42 474,50 478,48" fill="#F5A623" stroke="none"/>
   <line x1="490" y1="60" x2="508" y2="60" class="fig-wire"/>
   <text x="470" y="95" text-anchor="middle" class="fig-text">9</text>
-  <text x="470" y="107" text-anchor="middle" class="fig-label">Var. Resistor</text>
   <!-- Bottom return wire -->
   <line x1="250" y1="100" x2="510" y2="100" class="fig-wire"/>
   <circle cx="310" cy="100" r="2" class="fig-dot"/>
   <circle cx="410" cy="100" r="2" class="fig-dot"/>
-  <!-- Output labels -->
-  <text x="508" y="55" class="fig-label">+ Out</text>
-  <text x="508" y="106" class="fig-label">− Out</text>
+  
   <!-- Regulator ground -->
   <line x1="365" y1="75" x2="365" y2="100" class="fig-wire"/>
   <circle cx="365" cy="100" r="2" class="fig-dot"/>
@@ -1166,7 +1162,6 @@ function getFigureSVG(fig){
   <line x1="34" y1="70" x2="60" y2="70" class="fig-wire"/>
   <line x1="34" y1="110" x2="60" y2="110" class="fig-wire"/>
   <text x="30" y="55" text-anchor="middle" class="fig-text">1</text>
-  <text x="30" y="135" text-anchor="middle" class="fig-label">Connector</text>
   <!-- Component 2 - Meter/block -->
   <rect x="60" y="55" width="50" height="30" rx="12" class="fig-comp"/>
   <text x="85" y="74" text-anchor="middle" fill="#F5A623" font-family="'Space Mono',monospace" font-size="9">SWR</text>
@@ -1175,7 +1170,6 @@ function getFigureSVG(fig){
   <line x1="85" y1="85" x2="85" y2="110" class="fig-wire"/>
   <circle cx="85" cy="110" r="2" class="fig-dot"/>
   <text x="85" y="48" text-anchor="middle" class="fig-text">2</text>
-  <text x="85" y="130" text-anchor="middle" class="fig-label">Meter</text>
   <!-- Variable Inductor 3 -->
   <path d="M140,70 C140,58 152,58 152,70 C152,58 164,58 164,70 C164,58 176,58 176,70 C176,58 188,58 188,70" class="fig-comp"/>
   <!-- Variable arrow -->
@@ -1183,7 +1177,6 @@ function getFigureSVG(fig){
   <polygon points="178,52 171,58 175,56" fill="#F5A623" stroke="none"/>
   <line x1="188" y1="70" x2="230" y2="70" class="fig-wire"/>
   <text x="164" y="98" text-anchor="middle" class="fig-text">3</text>
-  <text x="164" y="112" text-anchor="middle" class="fig-label">Var. Inductor</text>
   <!-- Continue wire -->
   <line x1="110" y1="110" x2="230" y2="110" class="fig-wire"/>
   <!-- Capacitor (fixed, between lines) -->
@@ -1206,7 +1199,6 @@ function getFigureSVG(fig){
   <polygon points="330,70 370,50 370,90" class="fig-comp" fill="none"/>
   <line x1="350" y1="50" x2="350" y2="90" class="fig-comp"/>
   <text x="370" y="62" class="fig-text">4</text>
-  <text x="370" y="78" class="fig-label">Antenna</text>
 </svg>`;
 
   return '';
@@ -1805,7 +1797,7 @@ document.addEventListener('keydown',e=>{
   }else{
     if(e.code==='Space'||e.code==='Enter'){e.preventDefault();nextQuestion(cid);}
   }
-  if(e.code==='Escape')confirmRestart();
+  if(e.code==='Escape'&&!document.getElementById('fig-modal').classList.contains('visible'))confirmRestart();
 });
 
 // =========================================================================
@@ -1829,7 +1821,35 @@ document.addEventListener('keydown',e=>{
     refreshStudyHome();
   }
 })();
+
+// =========================================================================
+// FIGURE MODAL
+// =========================================================================
+function openFigureModal(figureEl){
+  const modal=document.getElementById('fig-modal');
+  const content=document.getElementById('fig-modal-body');
+  const svg=figureEl.querySelector('svg');
+  if(!svg)return;
+  content.innerHTML='<button class="fig-modal-close" onclick="closeFigureModal()">✕</button>'+svg.outerHTML;
+  modal.classList.add('visible');
+}
+function closeFigureModal(){
+  document.getElementById('fig-modal').classList.remove('visible');
+}
+document.addEventListener('click',e=>{
+  const fig=e.target.closest('.q-figure');
+  if(fig){openFigureModal(fig);return;}
+  if(e.target.id==='fig-modal')closeFigureModal();
+});
+document.addEventListener('keydown',e=>{
+  if(e.code==='Escape'&&document.getElementById('fig-modal').classList.contains('visible')){
+    closeFigureModal();e.stopPropagation();
+  }
+});
 </script>
 
+<div class="fig-modal-overlay" id="fig-modal">
+  <div class="fig-modal-content" id="fig-modal-body"></div>
+</div>
 
 </body></html>
